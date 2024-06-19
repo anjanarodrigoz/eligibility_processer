@@ -1,12 +1,19 @@
 import pandas as pd
 import tkinter as tk
-from tkinter import filedialog, messagebox, Label, Entry, Button, Text
+from tkinter import filedialog, messagebox, Label, Entry, Button, Text, ttk
 import pyexcel as p
 
 class EligibilityApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Eligibility List Processor")
+
+        # Style configuration
+        self.style = ttk.Style()
+        self.style.configure("TButton", font=("Helvetica", 10))
+        self.style.configure("TLabel", font=("Helvetica", 10))
+        self.style.configure("TEntry", font=("Helvetica", 10))
+        self.root.geometry("700x600")
 
         # File paths
         self.eligibility_file = None
@@ -24,32 +31,35 @@ class EligibilityApp:
         self.create_widgets()
 
     def create_widgets(self):
-        # Upload Eligibility List Button
-        self.upload_eligibility_button = Button(self.root, text="Upload Student Marks Excel", command=self.upload_eligibility)
-        self.upload_eligibility_button.grid(row=1, column=0, padx=10, pady=10)
-
-        # Upload Exclusion List Button
-        self.upload_exclusion_button = Button(self.root, text="Upload Exclusion Excel", command=self.upload_exclusion)
-        self.upload_exclusion_button.grid(row=1, column=1, padx=10, pady=10)
-
-        # Process Button
-        self.process_button = Button(self.root, text="Process", command=self.process_data)
-        self.process_button.grid(row=1, column=2, padx=10, pady=10)
-        self.process_button.config(state="disabled")
-
         # Guideline Section
-        self.guideline_text = Text(self.root, height=10, width=60, wrap=tk.WORD, bg=self.root.cget('bg'), bd=0)
+        self.guideline_text = Text(self.root, height=12, width=85, wrap=tk.WORD, bg=self.root.cget('bg'), bd=0, font=("Helvetica", 10))
         self.guideline_text.insert(tk.END, 
             "Guidelines:\n"
             "1. Click 'Upload Student Marks Excel' to upload the student marks file.\n"
+            "   - The file should have columns: Index Number, Student Name, and subject marks.\n"
             "2. Click 'Upload Exclusion Excel' to upload the exclusion list file.\n"
+            "   - The file should contain a column named 'Index Number' with the indices of students to exclude.\n"
             "3. After uploading both files, click 'Process'.\n"
             "4. Enter the weights and maximum marks for each subject, then click 'Submit'.\n"
             "5. The application will calculate the final marks and determine eligibility.\n"
-            "6. Save the final eligibility list to your desired location."
+            "6. Save the final eligibility list to your desired location.\n"
+            "Supported file formats: .xlsx, .xls, .ods"
         )
         self.guideline_text.config(state=tk.DISABLED)
         self.guideline_text.grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+
+        # Upload Eligibility List Button
+        self.upload_eligibility_button = ttk.Button(self.root, text="Upload Student Marks Excel", command=self.upload_eligibility)
+        self.upload_eligibility_button.grid(row=1, column=0, padx=10, pady=10)
+
+        # Upload Exclusion List Button
+        self.upload_exclusion_button = ttk.Button(self.root, text="Upload Exclusion Excel", command=self.upload_exclusion)
+        self.upload_exclusion_button.grid(row=1, column=1, padx=10, pady=10)
+
+        # Process Button
+        self.process_button = ttk.Button(self.root, text="Process", command=self.process_data)
+        self.process_button.grid(row=1, column=2, padx=10, pady=10)
+        self.process_button.config(state="disabled")
 
     def upload_file(self, file_type):
         file_path = filedialog.askopenfilename(title=f"Upload {file_type} Excel File", filetypes=[("Excel files", "*.xlsx *.xls *.ods")])
@@ -78,7 +88,7 @@ class EligibilityApp:
 
     def read_file(self, file_path):
         try:
-            if file_path.endswith('.xls'):
+            if file_path.endswith('.xls') or file_path.endswith('.xlsx'):
                 return pd.read_excel(file_path)
             elif file_path.endswith('.ods'):
                 return pd.DataFrame(p.get_sheet(file_name=file_path).to_records())
@@ -97,13 +107,13 @@ class EligibilityApp:
         weight_entries = []
         max_mark_entries = []
         for i, column in enumerate(self.subject_columns):
-            Label(self.root, text=f"Weight for {column}:").grid(row=i + 2, column=0, padx=10, pady=5)
-            weight_entry = Entry(self.root)
+            ttk.Label(self.root, text=f"Weight for {column}:").grid(row=i + 2, column=0, padx=10, pady=5)
+            weight_entry = ttk.Entry(self.root)
             weight_entry.grid(row=i + 2, column=1, padx=10, pady=5)
             weight_entries.append(weight_entry)
 
-            Label(self.root, text=f"Max marks for {column}:").grid(row=i + 2, column=2, padx=10, pady=5)
-            max_mark_entry = Entry(self.root)
+            ttk.Label(self.root, text=f"Max marks for {column}:").grid(row=i + 2, column=2, padx=10, pady=5)
+            max_mark_entry = ttk.Entry(self.root)
             max_mark_entry.grid(row=i + 2, column=3, padx=10, pady=5)
             max_mark_entries.append(max_mark_entry)
 
@@ -116,7 +126,7 @@ class EligibilityApp:
                 messagebox.showerror("Error", "Please enter valid numerical values for weights and max marks.")
                 return
 
-        Button(self.root, text="Submit", command=submit_weights_and_marks).grid(row=len(self.subject_columns) + 2, column=1, padx=10, pady=10)
+        ttk.Button(self.root, text="Submit", command=submit_weights_and_marks).grid(row=len(self.subject_columns) + 2, column=1, padx=10, pady=10)
 
     def process_data(self):
         excluded_indices = self.exclusion_df["Index Number"].tolist()
