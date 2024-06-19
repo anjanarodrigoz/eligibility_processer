@@ -13,20 +13,24 @@ Eligibility List Processor is a Python application that processes student marks 
 
 
 ## File Formats
-Student Marks Excel
-The student marks file should be an Excel file with the following structure:
 
-Index Number	Student Name	Subject1	Subject2	...
-1	John Doe	85	90	...
-2	Jane Smith	78	88	...
+Student Marks
 
-Exclusion List Excel
-The exclusion list file should be an Excel file with the following structure:
+| Index Number | Student Name | Subject1 | Subject2 | ... |
+|--------------|--------------|----------|----------|-----|
+| 1            | John Doe     | 85       | 90       | ... |
+| 2            | Jane Smith   | 78       | 88       | ... |
+| 3            | Alice Brown  | 92       | 85       | ... |
+| ...          | ...          | ...      | ...      | ... |
 
-Index Number
-1
-3
-5
+Exclusion List
+
+| Index Number |
+|--------------|
+| 1            |
+| 3            |
+| 5            |
+| ...          |
 
 
 ## Contributing
